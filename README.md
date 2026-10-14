@@ -17,13 +17,13 @@
 
 ## 使用技術
 
-| 項目 | 内容 |
-|:-----|:-----|
-| フレームワーク | Laravel 10 |
-| 言語 | PHP |
-| データベース | MySQL |
-| 実行環境 | Laravel Sail（Docker） |
-| 認証 | Laravel Fortify |
+| 項目           | 内容                   |
+| :------------- | :--------------------- |
+| フレームワーク | Laravel 10             |
+| 言語           | PHP                    |
+| データベース   | MySQL                  |
+| 実行環境       | Laravel Sail（Docker） |
+| 認証           | Laravel Fortify        |
 
 PHP と MySQL のバージョンは Sail のコンテナが決めます。手元で確かめるときは `./vendor/bin/sail php -v` と `./vendor/bin/sail mysql --version` を実行してください。
 
@@ -61,8 +61,8 @@ cp .env.example .env
 
 `migrate --seed` で、カテゴリ 3 件（お知らせ・技術メモ・雑記）と、次の 2 人、それぞれの投稿 2 件（計 4 件）が入ります。
 
-| メールアドレス | パスワード | 投稿 |
-|:---------------|:-----------|:-----|
+| メールアドレス      | パスワード | 投稿                   |
+| :------------------ | :--------- | :--------------------- |
 | `usera@example.com` | `password` | `/posts/1`・`/posts/2` |
 | `userb@example.com` | `password` | `/posts/3`・`/posts/4` |
 
