@@ -10,6 +10,8 @@ class Post extends Model
 {
     use HasFactory;
 
+    public const CONTENT_MAX_LENGTH = 140;
+
     protected $fillable = [
         'user_id',
         'category_id',
