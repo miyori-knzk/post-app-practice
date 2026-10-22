@@ -28,6 +28,8 @@
         .btn-secondary:hover { background: #F7F8F9; }
         .btn:focus-visible { outline: 2px solid #E8792B; outline-offset: 2px; }
         .error { color: #D6402C; font-size: 0.83rem; margin-top: 0.3rem; }
+        .counter { color: #5B6570; font-size: 0.8rem; margin-top: 0.3rem; text-align: right; }
+        .counter.over { color: #D6402C; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -64,9 +66,20 @@
                     @enderror
                 </div>
 
+                @php
+                    $contentLimit = \App\Models\Post::CONTENT_MAX_LENGTH;
+                    $contentRemaining = $contentLimit - mb_strlen(str_replace("\r\n", "\n", old('content', $post->content)));
+                @endphp
                 <div class="form-group">
                     <label for="content">本文</label>
                     <textarea id="content" name="content" required>{{ old('content', $post->content) }}</textarea>
+                    <p id="content-counter" class="counter @if ($contentRemaining < 0) over @endif" aria-live="polite">
+                        @if ($contentRemaining < 0)
+                            {{ $contentLimit }}字を超えています（あと{{ -$contentRemaining }}字減らしてください）
+                        @else
+                            残り {{ $contentRemaining }} 字
+                        @endif
+                    </p>
                     @error('content')
                         <p class="error">{{ $message }}</p>
                     @enderror
@@ -79,5 +92,25 @@
             </form>
         </main>
     </div>
+
+    <script>
+        (function () {
+            var limit = {{ $contentLimit }};
+            var textarea = document.getElementById('content');
+            var counter = document.getElementById('content-counter');
+
+            function update() {
+                // サーバーの文字数（mb_strlen）に合わせ、サロゲートペアも1字として数える
+                var remaining = limit - Array.from(textarea.value).length;
+                counter.classList.toggle('over', remaining < 0);
+                counter.textContent = remaining < 0
+                    ? limit + '字を超えています（あと' + (-remaining) + '字減らしてください）'
+                    : '残り ' + remaining + ' 字';
+            }
+
+            textarea.addEventListener('input', update);
+            update();
+        })();
+    </script>
 </body>
 </html>

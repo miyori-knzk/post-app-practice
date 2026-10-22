@@ -71,6 +71,29 @@ class PostContentLimitTest extends TestCase
             ->assertSessionHasErrors(['content' => '本文を入力してください。']);
     }
 
+    public function test_編集画面に残り字数が表示される(): void
+    {
+        $this->actingAs($this->user)
+            ->get(route('posts.edit', $this->post))
+            ->assertOk()
+            ->assertSee('id="content-counter"', false)
+            ->assertSee('残り 136 字');
+    }
+
+    public function test_超過して更新に失敗した画面では超過字数が表示される(): void
+    {
+        $this->actingAs($this->user)
+            ->from(route('posts.edit', $this->post))
+            ->followingRedirects()
+            ->put(route('posts.update', $this->post), [
+                'title' => '新しいタイトル',
+                'category_id' => $this->post->category_id,
+                'content' => str_repeat('あ', 143),
+            ])
+            ->assertSee('本文は140字以内で入力してください。')
+            ->assertSee('140字を超えています（あと3字減らしてください）');
+    }
+
     public function test_他人の投稿は更新できない(): void
     {
         $this->update('乗っ取り', User::factory()->create())->assertForbidden();
