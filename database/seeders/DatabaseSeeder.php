@@ -78,22 +78,24 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // リプライ（[返信先ポストの添字, 返信する人, 本文, 返信先ポストからの経過時間]）
+        // リプライ（[返信先ポストの添字, 返信する人, 本文, 返信先ポストの何時間後か]）
         $replies = [
-            [0, $daichi, 'はじめまして！これからよろしくお願いします。', 190],
-            [0, $mio, '楽しみにしています。', 180],
-            [3, $kento, 'with() 、本当に1行で直って驚きますよね。', 160],
-            [5, $sota, '画面が増えたら FormRequest に分ける、で良いと思います。', 130],
-            [5, $haruka, 'ありがとうございます、そうしてみます。', 120],
+            [0, $daichi, 'はじめまして！これからよろしくお願いします。', 10],
+            [0, $mio, '楽しみにしています。', 20],
+            [3, $kento, 'with() 、本当に1行で直って驚きますよね。', 6],
+            [5, $sota, '画面が増えたら FormRequest に分ける、で良いと思います。', 11],
+            [5, $haruka, 'ありがとうございます、そうしてみます。', 21],
         ];
 
-        foreach ($replies as [$index, $user, $content, $hoursAgo]) {
+        foreach ($replies as [$index, $user, $content, $hoursAfter]) {
+            $repliedAt = $created[$index]->created_at->copy()->addHours($hoursAfter);
+
             Reply::create([
                 'user_id' => $user->id,
                 'post_id' => $created[$index]->id,
                 'content' => $content,
-                'created_at' => now()->subHours($hoursAgo),
-                'updated_at' => now()->subHours($hoursAgo),
+                'created_at' => $repliedAt,
+                'updated_at' => $repliedAt,
             ]);
         }
     }
