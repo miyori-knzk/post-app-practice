@@ -247,8 +247,7 @@ class ReplyTest extends TestCase
         $this->actingAs($this->other)
             ->get(route('posts.index'))
             ->assertOk()
-            ->assertSee(route('posts.show', $this->post))
-            ->assertSee('返信')
+            ->assertSee('<a href="'.route('posts.show', $this->post).'">返信</a>', false)
             ->assertDontSee(route('posts.edit', $this->post));
     }
 }
