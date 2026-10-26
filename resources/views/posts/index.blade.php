@@ -18,7 +18,10 @@
         .logout-btn { background: #FFFFFF; color: #0F1419; border: 1px solid #D3D9DE; padding: 0.38rem 1rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; flex-shrink: 0; }
         .logout-btn:hover { background: #F7F8F9; }
         .logout-btn:focus-visible { outline: 2px solid #E8792B; outline-offset: 2px; }
-        .page-title { padding: 0.55rem 1rem 0.7rem; font-weight: 800; font-size: 1.06rem; }
+        .page-title { display: flex; justify-content: space-between; align-items: center; gap: 0.8rem; padding: 0.55rem 1rem 0.7rem; font-weight: 800; font-size: 1.06rem; }
+        .write-btn { background: #0F1419; color: #fff; padding: 0.38rem 1rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+        .write-btn:hover { background: #272C30; }
+        .write-btn:focus-visible { outline: 2px solid #E8792B; outline-offset: 2px; }
         .post { display: flex; gap: 0.75rem; padding: 0.9rem 1rem; border-bottom: 1px solid #EFF1F4; }
         .post:hover { background: #F7F8F9; }
         .avatar { width: 44px; height: 44px; border-radius: 999px; flex-shrink: 0; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; }
@@ -51,7 +54,10 @@
                     </form>
                 </div>
             </div>
-            <div class="page-title">ホーム</div>
+            <div class="page-title">
+                <span>ホーム</span>
+                <a href="{{ route('posts.create') }}" class="write-btn">ポストを書く</a>
+            </div>
         </header>
 
         <main class="feed">
