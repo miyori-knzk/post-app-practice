@@ -25,13 +25,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## アーキテクチャ
 
-- **ルート**: `routes/web.php`。`/posts` 系（index / edit / update / destroy）はすべて `auth` ミドルウェア内。投稿の新規作成・詳細表示ルートはまだない。
-- **認可**: `PostController` の edit/update/destroy で `$this->authorize()` を呼び、`app/Policies/PostPolicy.php` で「投稿者本人のみ」を判定（他人の投稿は 403）。Policy は命名規約による自動検出で、`AuthServiceProvider::$policies` には登録していない。ビュー側でも編集・削除ボタンを本人にだけ出している。
+- **ルート**: `routes/web.php`。`/posts` 系（index / show / edit / update / destroy）、リプライの送信（`POST /posts/{post}/replies`）と削除（`DELETE /replies/{reply}`）はすべて `auth` ミドルウェア内。投稿の新規作成ルートはまだない。
+- **認可**: `PostController` の edit/update/destroy と `ReplyController` の destroy で `$this->authorize()` を呼び、`app/Policies/PostPolicy.php` / `ReplyPolicy.php` で「投稿者本人のみ」を判定（他人の投稿・リプライは 403）。ポストの投稿者でも他人のリプライは消せない。Policy は命名規約による自動検出で、`AuthServiceProvider::$policies` には登録していない。ビュー側でも編集・削除ボタンを本人にだけ出している（詳細表示・リプライ送信はログイン済みなら誰でも可）。
 - **認証**: Fortify。ログイン・登録画面は `FortifyServiceProvider` で `resources/views/auth/*` を指定。ユーザー作成などの処理は `app/Actions/Fortify/`。
-- **モデル**: `User` 1—n `Post` n—1 `Category`。一覧は `Post::with(['user', 'category'])` で eager load。
-- **シーダー**: `DatabaseSeeder` がカテゴリ 3 件と練習用ユーザー 2 人（`usera@example.com` / `userb@example.com`、パスワード `password`）、各 2 件の投稿を入れる。
+- **モデル**: `User` 1—n `Post` n—1 `Category`。`Reply` は `User` と `Post` に n—1（ポスト削除でリプライも cascade 削除）。一覧は `Post::with(['user', 'category'])` で eager load。詳細画面（`posts/show.blade.php`）はポストとリプライを古い順に表示し、本文は `Post::CONTENT_MAX_LENGTH`（140字）以内。
+- **シーダー**: `DatabaseSeeder` がカテゴリ 3 件、練習用ユーザー 7 人（検証用は `usera@example.com` / `userb@example.com`、全員パスワード `password`）、ポスト 25 件、リプライ 5 件を入れる。リプライの時刻は返信先ポストの何時間後かで指定する。
 
 ## ディレクトリ
 
 - `docs/` — 学習者が自分で作る設計書（Tutorial 番号ごとのフォルダ、Markdown と draw.io / PNG）。
+- `docs/reply.md` — リプライ機能の設計書（Issue #1）。実装とテストはこの設計に沿っている。
 - `answers/` — Tutorial 13 の設計書の解答例。アプリのコードとは無関係（詳細は `answers/README.md`）。
